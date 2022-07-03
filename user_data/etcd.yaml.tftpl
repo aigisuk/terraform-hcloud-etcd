@@ -1,0 +1,27 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+package_reboot_if_required: false
+
+# Disable password authentication for root user
+ssh_pwauth: false
+
+# Write out base64 encoded etcd install script to /root/install_etcd.sh
+write_files:
+- encoding: gzip+base64
+  content: ${install_script}
+  owner: root:root
+  path: /root/install_etcd.sh
+  permissions: '0755'
+  #defer: true
+
+# Install required packages
+packages:
+  - ca-certificates
+  - curl
+  - ntp
+
+# Install etcd
+runcmd:
+  # run etcd install script
+  - bash /root/install_etcd.sh
